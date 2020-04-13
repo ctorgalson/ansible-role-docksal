@@ -3,6 +3,12 @@
   hosts: all
   vars:
     docksal_user: "molecule"
+    docksal_user_rc_file: "{{ docksal_user_home }}/.bashrc"
+    docksal_global_config:
+      - key: "DOCKSAL_VHOST_PROXY_IP"
+        value: "0.0.0.0"
+      - key: "DOCKSAL_DNS_DOMAIN"
+        value: "molecule"
   tasks:
     - name: "Include ansible-role-docksal"
       include_role:
