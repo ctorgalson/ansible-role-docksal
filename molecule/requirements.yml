@@ -1,0 +1,7 @@
+---
+- role: "geerlingguy.docker"
+  version: "2.7.0"
+- role: "weareinteractive.apt"
+  version: "2.9.1"
+- role: "weareinteractive.users"
+  version: "1.14.1"

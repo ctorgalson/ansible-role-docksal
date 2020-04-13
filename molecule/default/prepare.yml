@@ -1,0 +1,39 @@
+---
+- name: Prepare
+  hosts: all
+  vars:
+    # Playbook-specific vars.
+    docker_daemon_directory_path: "/etc/docker"
+    # geerlingguy.docker vars.
+    docker_users:
+      - "molecule"
+    docker_install_compose: true
+    # weareinteractive.apt vars.
+    apt_packages:
+      - "curl"
+      - "git"
+    # weareinteractive.users vars.
+    users:
+      - username: "molecule"
+        shell: "/bin/bash"
+  pre_tasks:
+    - name: Create /etc/docker directory.
+      file:
+        path: "{{ docker_daemon_directory_path }}"
+        state: directory
+        owner: root
+        group: root
+
+    - name: Create /etc/docker/daemon.json
+      copy:
+        content: |
+          {
+            "storage-driver": "vfs"
+          }
+        dest: "{{ docker_daemon_directory_path }}/daemon.json"
+        owner: root
+        group: root
+  roles:
+    - "weareinteractive.apt"
+    - "weareinteractive.users"
+    - "geerlingguy.docker"

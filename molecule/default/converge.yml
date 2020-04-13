@@ -1,6 +1,8 @@
 ---
 - name: Converge
   hosts: all
+  vars:
+    docksal_user: "molecule"
   tasks:
     - name: "Include ansible-role-docksal"
       include_role:
