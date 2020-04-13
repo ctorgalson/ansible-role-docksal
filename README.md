@@ -1,38 +1,51 @@
-Role Name
-=========
+# Ansible Role Docksal
 
-A brief description of the role goes here.
+![Molecule Test](https://github.com/ctorgalson/ansible-role-docksal/workflows/Molecule%20Test/badge.svg)
 
-Requirements
-------------
+This role idempotently installs [Docksal](https://docksal.io/) on Ubuntu/Debian systems.
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+Specifically, the role performs the following tasks:
 
-Role Variables
---------------
+1. Clones the Docksal repo if `/usr/local/bin/fin` is not present,
+2. Copies the binary into place,
+3. Idempotently runs `fin config set --global` with any configured variables,
+4. Runs `fin system reset`,
+5. Runs `fin update`.
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+## Role Variables
 
-Dependencies
-------------
+All of the following variables can be set, but _only_ `docksal_user` is mandatory.
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+| Variable name | Default value | Description |
+|---------------|---------------|-------------|
+| `docksal_repo`          | `https://github.com/docksal/docksal.git` | The github url to the Docksal repository. Should seldom need changing. |
+| `docksal_dest`          | `/tmp/docksal` | The temporary location for the repository on the remote system. |
+| `docksal_fin_path`      | `/usr/local/bin/fin` | The path to the `fin` binary, post-install. |
+| `docksal_user`          | `example` | The user to install Docksal for. |
+| `docksal_global_config` | `[]` | Docksal global configuration variables to pass to `fin config set --global` (see sample playbook, below, for syntax). |
 
-Example Playbook
-----------------
+## Example Playbook
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+    ---
+    - name: Install and configure Docksal.
+      hosts: all
+      vars:
+        docksal_user: "molecule"
+        docksal_user_rc_file: "{{ docksal_user_home }}/.bashrc"
+        docksal_global_config:
+          - key: "DOCKSAL_VHOST_PROXY_IP"
+            value: "0.0.0.0"
+          - key: "DOCKSAL_DNS_DOMAIN"
+            value: "molecule"
+      tasks:
+        - name: "Include ansible-role-docksal"
+          include_role:
+            name: "ansible-role-docksal"
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+## License
 
-License
--------
+GPLv2
 
-BSD
+## Author Information
 
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Christopher Torgalson
