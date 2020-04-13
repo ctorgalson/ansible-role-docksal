@@ -1,37 +1,18 @@
 ---
 # tasks file for ansible-role-docksal
 
-- name: Check if Docksal already installed (if installed, it can self-update).
-  shell: "command -v fin"
-  register: docksal_exists
-  failed_when: false
-  changed_when: false
+- name: Install Docksal.
+  include_tasks: "docksal-install.yml"
 
-- name: Install Docksal if it's not already present.
-  block:
-    - name: Clone Docksal into {{ docksal_dest }}.
-      git:
-        repo: "{{ docksal_repo }}"
-        dest: "{{ docksal_dest }}"
-
-    - name: Copy fin binary into place.
-      copy:
-        src: "{{ docksal_dest }}/bin/fin"
-        dest: "{{ docksal_fin_path }}"
-        mode: "a+x"
-        remote_src: true
-
-  when: "docksal_exists.rc != 0"
-
-# - name: Include global Docksal config tasks.
-#   include_tasks:
-#     file: "docksal-global-config.yml"
-#     apply:
-#       tags:
-#         - docksal
-#   loop: "{{ docksal_global_config }}"
-#   loop_control:
-#     loop_var: variable
+- name: Include global Docksal config tasks.
+  include_tasks:
+    file: "docksal-global-config.yml"
+    apply:
+      tags:
+        - docksal
+  loop: "{{ docksal_global_config }}"
+  loop_control:
+    loop_var: variable
 
 - name: Reset the Docksal system.
   command: "{{ docksal_fin_path }} system reset"
