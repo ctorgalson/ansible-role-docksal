@@ -11,7 +11,7 @@ docksal_global_config:
   - key: "DOCKSAL_VHOST_PROXY_IP"
     value: "0.0.0.0"
   - key: "DOCKSAL_DNS_DOMAIN"
-    value: "{{ docksal_user }}"
+    value: "docksal"
 
 # Vars for prepare.yml.
 
@@ -40,4 +40,5 @@ users:
 # Vars for verify.yml.
 
 docksal_project_name: "foo"
+docksal_project_env_contents: "DOCKSAL_STACK=\"default-nodb\""
 docksal_project_contents: "<html><body>Hello, Docksal!</body></html>"

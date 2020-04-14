@@ -57,11 +57,11 @@
 
         - name: "Verify that the project directory exists."
           assert:
-            that: "'DOCKSAL_STACK=\"default-nodb\"' in docksal_project_env.stdout"
+            that: "docksal_project_env_contents in docksal_project_env.stdout"
             fail_msg: "The project could not be found, or the expected variable was not found in the project's env file."
 
         - name: "Try to reach the project at the expected url."
-          command: "http {{ docksal_project_name }}.{{ docksal_user }}"
+          command: "http {{ docksal_project_name }}.docksal"
           args:
             chdir: "{{ docksal_user_home }}"
           become: true
