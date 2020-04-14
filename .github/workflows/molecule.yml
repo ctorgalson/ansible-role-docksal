@@ -24,4 +24,4 @@ jobs:
           ./scripts/install-python-dependencies.sh
       - name: Test with molecule
         run: |
-          molecule test
+          molecule --debug test

@@ -1,21 +1,6 @@
 ---
 - name: Prepare
   hosts: all
-  vars:
-    # Playbook-specific vars.
-    docker_daemon_directory_path: "/etc/docker"
-    # geerlingguy.docker vars.
-    docker_users:
-      - "molecule"
-    docker_install_compose: true
-    # weareinteractive.apt vars.
-    apt_packages:
-      - "curl"
-      - "git"
-    # weareinteractive.users vars.
-    users:
-      - username: "molecule"
-        shell: "/bin/bash"
   pre_tasks:
     - name: Create /etc/docker directory.
       file:
@@ -36,4 +21,5 @@
   roles:
     - "weareinteractive.apt"
     - "weareinteractive.users"
+    - "geerlingguy.security"
     - "geerlingguy.docker"
