@@ -16,7 +16,11 @@
 
 - name: Reset the Docksal system.
   command: "{{ docksal_fin_path }} system reset"
+  args:
+    chdir: "{{ docksal_user_home }}"
   changed_when: false
+  become: true
+  become_user: "{{ docksal_user }}"
 
 - name: Update Docksal.
   command: "fin update"
@@ -25,3 +29,5 @@
   # etc. So we sacrifice a bit of strict idempotency for the option to reliably
   # use --check when running playbooks containing this role.
   changed_when: false
+  become: true
+  become_user: "{{ docksal_user }}"
