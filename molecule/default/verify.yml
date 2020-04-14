@@ -49,7 +49,7 @@
         - name: "Add project to /etc/hosts (Docksal's DNS not reliable in test environment.)"
           command: "fin hosts add"
           args:
-            chdir: "{{ docksal_user_home }}"
+            chdir: "{{ docksal_user_home }}/foo"
           become: true
           become_user: "{{ docksal_user }}"
 
