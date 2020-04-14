@@ -15,7 +15,7 @@
 
         - name: "Verify that the binary is at the expected location."
           assert:
-            that: "docksal_binary_info == docksal_fin_path"
+            that: "docksal_binary_info.stdout == docksal_fin_path"
             fail_msg: "The docksal binary was not found at the expected path."
 
     - name: "Test: verify fin global config settings."
