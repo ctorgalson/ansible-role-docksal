@@ -46,6 +46,13 @@
           become: true
           become_user: "{{ docksal_user }}"
 
+        - name: "Add project to /etc/hosts (Docksal's DNS not reliable in test environment.)"
+          command: "fin hosts add"
+          args:
+            chdir: "{{ docksal_user_home }}"
+          become: true
+          become_user: "{{ docksal_user }}"
+
         - name: "Get information about the new project."
           command: "cat {{ docksal_project_name }}/.docksal/docksal.env"
           args:
