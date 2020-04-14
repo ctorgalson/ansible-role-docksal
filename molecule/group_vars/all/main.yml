@@ -1,0 +1,43 @@
+# Vars for converge.yml/all.
+#
+# Note: we're redefining all the vars used in the role's defaults/main.yml file
+# since prepare.yml and verify.yml don't run the role. And because there're
+# only six of them :)
+docksal_fin_path: "/usr/local/bin/fin"
+docksal_user: "molecule"
+docksal_user_home: "/home/{{ docksal_user }}"
+docksal_user_rc_file: "{{ docksal_user_home }}/.bashrc"
+docksal_global_config:
+  - key: "DOCKSAL_VHOST_PROXY_IP"
+    value: "0.0.0.0"
+  - key: "DOCKSAL_DNS_DOMAIN"
+    value: "{{ docksal_user }}"
+
+# Vars for prepare.yml.
+
+# Playbook-specific vars.
+docker_daemon_directory_path: "/etc/docker"
+# geerlingguy.docker vars.
+docker_users:
+  - "{{ docksal_user }}"
+docker_install_compose: true
+# geerlingguy.security vars.
+security_sudoers_passwordless:
+  - "{{ docksal_user }}"
+security_autoupdate_enabled: false
+security_fail2ban_enabled: false
+# weareinteractive.apt vars.
+apt_packages:
+  - "curl"
+  - "git"
+  - "httpie"
+  - "openssh-server"
+# weareinteractive.users vars.
+users:
+  - username: "{{ docksal_user }}"
+    shell: "/bin/bash"
+
+# Vars for verify.yml.
+
+docksal_project_name: "foo"
+docksal_project_contents: "<html><body>Hello, Docksal!</body></html>"
