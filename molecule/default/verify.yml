@@ -66,17 +66,3 @@
           assert:
             that: "docksal_project_env_contents in docksal_project_env.stdout"
             fail_msg: "The project could not be found, or the expected variable was not found in the project's env file."
-
-        - name: "Try to reach the project at the expected url."
-          command: "http {{ docksal_project_name }}.docksal"
-          args:
-            chdir: "{{ docksal_user_home }}"
-          become: true
-          become_user: "{{ docksal_user }}"
-          changed_when: false
-          register: docksal_project_response
-
-        - name: "Test that the result was as expected."
-          assert:
-            that: "docksal_project_contents in docksal_project_response.stdout"
-            fail_msg: "The project could not be contacted, or the html contents were not as expected."
