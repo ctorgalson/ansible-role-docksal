@@ -12,6 +12,14 @@ Specifically, the role performs the following tasks:
 4. Runs `fin system reset`,
 5. Runs `fin update`.
 
+Note that Docksal usually runs in a user account, but that that user will need
+sudo access. This means that when used in playbooks, one of two things has to
+happen. Either:
+
+1. The `ansible-playbook` command should be run with the `-K` flag, or
+2. The `{{ docksal_user }}` should be set up with passwordless sudo access 
+   (this is how this role's tests run).
+
 ## Role Variables
 
 All of the following variables can be set, but _only_ `docksal_user` is mandatory.
