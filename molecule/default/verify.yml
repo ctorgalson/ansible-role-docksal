@@ -27,8 +27,8 @@
 
         - name: "Verify that the expected settings are present."
           assert:
-            that: "variable.key in docksal_config_info"
-            fail_msg: "The variable `{{ variable }}` was not found in the settings file."
+            that: "variable.key in docksal_config_info.stdout"
+            fail_msg: "The variable `{{ variable.key }}` was not found in the settings file."
           loop: "{{ docksal_global_config }}"
           loop_control:
             loop_var: variable
