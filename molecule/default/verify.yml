@@ -4,6 +4,58 @@
 - name: Verify
   hosts: all
   tasks:
-  - name: Example assertion
-    assert:
-      that: true
+    - name: "Test: Ensure fin binary exists."
+      block:
+        - name: Retrieve information about the fin command.
+          shell: "command -v fin"
+          args:
+            executable: "/bin/bash"
+          register: docksal_binary_info
+          changed_when: false
+
+        - name: "Verify that the binary is at the expected location."
+          assert:
+            that: "docksal_binary_info == docksal_fin_path"
+            fail_msg: "The docksal binary was not found at the expected path."
+
+    - name: "Test: verify fin global config settings."
+      block:
+        - name: "Get the contents of the Docksal settings file."
+          command: "cat {{ docksal_user_home }}/.docksal/docksal.env"
+          register: docksal_config_info
+          changed_when: false
+
+        - name: "Verify that the expected settings are present."
+          assert:
+            that: "variable.key in docksal_config_info"
+            fail_msg: "The variable `{{ variable }}` was not found in the settings file."
+          loop: "{{ docksal_global_config }}"
+          loop_control:
+            loop_var: variable
+
+    - name: "Test: Create a new Docksal project."
+      block:
+        - name: "Create the project."
+          command: >
+            fin project create
+            --name={{ docksal_project_name }}
+            --choice=15
+            --yes
+          args:
+            chdir: "{{ docksal_user_home }}"
+          become: true
+          become_user: "{{ docksal_user }}"
+
+        - name: "Try to reach the project at the expected url."
+          command: "http {{ docksal_project_name }}.{{ docksal_user }}"
+          args:
+            chdir: "{{ docksal_user_home }}"
+          become: true
+          become_user: "{{ docksal_user }}"
+          changed_when: false
+          register: docksal_project_response
+
+        - name: "Test that the result was as expected."
+          assert:
+            that: "docksal_project_contents in docksal_project_response.stdout"
+            fail_msg: "The project could not be contacted, or the html contents were not as expected."
