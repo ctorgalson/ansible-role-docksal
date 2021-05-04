@@ -7,8 +7,6 @@ dependency:
     role-file: molecule/requirements.yml
 lint: |
   ./scripts/lint.sh
-driver:
-  name: docker
 platforms:
   - name: instance
     image: geerlingguy/docker-ubuntu2004-ansible:latest
