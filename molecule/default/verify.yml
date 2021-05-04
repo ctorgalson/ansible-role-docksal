@@ -39,7 +39,7 @@
           command: >
             fin project create
             --name={{ docksal_project_name }}
-            --choice=15
+            --choice=18
             --yes
           args:
             chdir: "{{ docksal_user_home }}"
