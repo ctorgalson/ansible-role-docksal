@@ -1,0 +1,18 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+ansible = "*"
+flake8 = "*"
+testinfra = "*"
+yamllint = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"
+
+[packages.molecule]
+extras = [ "docker",]
