@@ -11,7 +11,7 @@ driver:
   name: docker
 platforms:
   - name: instance
-    image: geerlingguy/docker-ubuntu1804-ansible:latest
+    image: geerlingguy/docker-ubuntu2004-ansible:latest
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
@@ -23,6 +23,7 @@ provisioner:
     links:
       group_vars: ../group_vars
   playbooks:
+    converge: converge.yml
     prepare: prepare.yml
 verifier:
   name: ansible
