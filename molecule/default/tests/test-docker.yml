@@ -1,0 +1,23 @@
+---
+# Tests that 'fin update' has correctly installed Docker.
+
+- name: "Retrieve information about the docker command."
+  ansible.builtin.shell: "command -v docker"
+  args:
+    executable: "/bin/bash"
+  register: reg__docker_location
+  changed_when: false
+
+- name: "Retrieve Docker version."
+  ansible.builtin.command: "docker --version"
+  register: reg__docker_version
+  changed_when: false
+
+- name: "Verify | Docker is present and working in the expected location."
+  ansible.builtin.assert:
+    that:
+      - "reg__docker_location.stdout == '/usr/bin/docker'"
+      - "'Docker version' in reg__docker_version.stdout"
+      - "'build' in reg__docker_version.stdout"
+      - "reg__docker_version.rc == 0"
+    fail_msg: "Docker is not present or not working."

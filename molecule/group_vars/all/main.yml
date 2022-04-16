@@ -8,10 +8,12 @@ docksal_user: "molecule"
 docksal_user_home: "/home/{{ docksal_user }}"
 docksal_user_rc_file: "{{ docksal_user_home }}/.bashrc"
 docksal_global_config:
-  - key: "DOCKSAL_VHOST_PROXY_IP"
+  - name: "DOCKSAL_VHOST_PROXY_IP"
     value: "0.0.0.0"
-  - key: "DOCKSAL_DNS_DOMAIN"
+  - name: "DOCKSAL_DNS_DOMAIN"
     value: "docksal"
+  - name: "CI"
+    value: "false"
 
 # Vars for prepare.yml.
 

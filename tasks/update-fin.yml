@@ -1,0 +1,7 @@
+---
+# update tasks for ansible-role-docksal
+
+- name: "Docksal | Update fin binary."
+  ansible.builtin.command: "fin update"
+  become: true
+  become_user: "{{ docksal_user }}"

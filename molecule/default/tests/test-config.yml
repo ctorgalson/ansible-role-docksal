@@ -1,0 +1,17 @@
+---
+# Tests Docksal configuration.
+
+- name: "Get the contents of the Docksal settings file."
+  ansible.builtin.command: "cat {{ docksal_user_home }}/.docksal/docksal.env"
+  register: reg__config_vars
+  changed_when: false
+
+- name: "Verify | Expected settings are present in docksal.env file."
+  ansible.builtin.assert:
+    that:
+      - "config.name in reg__config_vars.stdout"
+      - "config.value in reg__config_vars.stdout"
+    fail_msg: "The variable '{{ config.name }}' was not found in the settings file, or its value was not '{{ config.value }}'."
+  loop: "{{ docksal_global_config }}"
+  loop_control:
+    loop_var: config

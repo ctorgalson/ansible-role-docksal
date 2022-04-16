@@ -1,0 +1,9 @@
+---
+# install tasks for ansible-role-docksal
+
+- name: "Docksal | Copy the fin binary into place."
+  copy:
+    src: "{{ tmp_fin_path }}"
+    dest: "{{ docksal_fin_path }}"
+    mode: "a+x"
+    remote_src: true

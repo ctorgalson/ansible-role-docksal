@@ -1,0 +1,51 @@
+---
+# Tests creation and operation of simple Docksal project.
+
+- name: "Create new project."
+  ansible.builtin.command: >
+    fin project create
+    --name={{ docksal_project_name }}
+    --choice=18
+    --yes
+  args:
+    chdir: "{{ docksal_user_home }}"
+  async: 300
+  poll: 15
+  become: true
+  become_user: "{{ docksal_user }}"
+  register: reg__fin_create
+  failed_when: false
+
+- name: "Add project to /etc/hosts with 'fin hosts'."
+  ansible.builtin.command: "fin hosts add"
+  args:
+    chdir: "{{ docksal_user_home }}/{{ docksal_project_name }}"
+  become: true
+  become_user: "{{ docksal_user }}"
+
+- name: "Retrieve new project information."
+  ansible.builtin.command: "cat {{ docksal_project_name }}/.docksal/docksal.env"
+  args:
+    chdir: "{{ docksal_user_home }}"
+  become: true
+  become_user: "{{ docksal_user }}"
+  changed_when: false
+  register: reg__project_env
+
+- name: "Fetch project homepage contents."
+  ansible.builtin.uri:
+    url: "http://{{ docksal_project_name }}.docksal"
+    return_content: true
+  register: reg__project_homepage
+
+- name: "Verify | Project directory exists."
+  ansible.builtin.assert:
+    that: "docksal_project_env_contents in reg__project_env.stdout"
+    fail_msg: "The project could not be found, or the expected variable was not found in the project's env file."
+
+- name: "Verify | Retrieved homepage contents match expectations."
+  ansible.builtin.assert:
+    that:
+      - "docksal_project_contents in reg__project_homepage.content"
+      - "reg__project_homepage.status == 200"
+    fail_msg: "The homepage did not contain the expected contents, or returned a non-200 status code."

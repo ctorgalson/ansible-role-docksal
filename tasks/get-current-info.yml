@@ -1,0 +1,30 @@
+---
+# current info tasks for ansible-role-current
+
+- name: "Docksal | Check if fin binary already exists."
+  ansible.builtin.shell: "command -v fin"
+  args:
+    executable: "/bin/bash"
+  register: reg__fin_exists
+  failed_when: false
+  changed_when: false
+
+- name: "Docksal | Set 'install' fact."
+  ansible.builtin.set_fact:
+    fact__install: "{{ reg__fin_exists.rc != 0 }}"
+
+- name: "Docksal | Determine current Docksal version."
+  ansible.builtin.shell: "fin --version | cut -f3 -d' '"
+  register: reg__current_version
+  become: true
+  become_user: "{{ docksal_user }}"
+  when: "not fact__install"
+  changed_when: false
+
+- name: "Docksal | Set 'current' fact."
+  ansible.builtin.set_fact:
+    fact__current: "{{ reg__current_version.stdout|default(0) }}"
+
+- name: "Docksal | Set 'update' fact."
+  ansible.builtin.set_fact:
+    fact__update: "{{ not fact__install and fact__latest is version(fact__current, '>') }}"

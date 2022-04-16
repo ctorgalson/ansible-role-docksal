@@ -5,6 +5,7 @@ galaxy_info:
 
   license: GPL-2.0-or-later
 
+  namespace: ctorgalson
   role_name: docksal
 
   min_ansible_version: 2.9
