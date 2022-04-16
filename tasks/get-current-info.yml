@@ -23,7 +23,7 @@
 
 - name: "Docksal | Set 'current' fact."
   ansible.builtin.set_fact:
-    fact__current: "{{ reg__current_version.stdout|default(0) }}"
+    fact__current: "{{ reg__current_version.stdout|default('0') }}"
 
 - name: "Docksal | Set 'update' fact."
   ansible.builtin.set_fact:
