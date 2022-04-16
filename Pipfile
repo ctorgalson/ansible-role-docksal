@@ -8,6 +8,7 @@ pytest-testinfra = "*"
 yamllint = "*"
 flake8 = "*"
 setuptools = "*"
+ansible-lint = "*"
 
 [dev-packages]
 
