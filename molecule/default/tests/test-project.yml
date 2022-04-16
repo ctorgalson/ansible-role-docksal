@@ -26,6 +26,16 @@
   become: true
   become_user: "{{ docksal_user }}"
 
+- name: "TEMP | Debug /etc/hosts."
+  block:
+    - name: "Get /etc/hosts content."
+      command: "cat /etc/hosts"
+      register: reg__etc_hosts_content
+
+    - name: "Debug reg__etc_hosts_content"
+      debug:
+        var: reg__etc_hosts_content
+
 - name: "Retrieve new project information."
   ansible.builtin.command: "cat {{ docksal_project_name }}/.docksal/docksal.env"
   args:
@@ -37,7 +47,7 @@
 
 - name: "Fetch project homepage contents."
   ansible.builtin.uri:
-    url: "http://{{ docksal_project_name }}.docksal"
+    url: "http://{{ docksal_project_name }}.docksal.site"
     return_content: true
   register: reg__project_homepage
 
