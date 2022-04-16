@@ -1,87 +1,94 @@
 ---
 # Tests creation and operation of simple Docksal project.
+#
+# Specifically, we test the following:
+#
+#   - that we CAN use fin to create a project (fin project create),
+#   - that we CAN use fin to write to /etc/hosts (fin hosts add),
+#   - that the project's directory was created,
+#   - that the project's config file is correctly created,
+#   - that the project's expected containers are running,
+#   - that /etc/hosts contains the project's hostname,
+#
+# We can't reliably do an http request to test the server in every environment,
+# so we infer if the server is operating correctly by checking for running
+# Docker containers.
 
-- name: "Create new project."
-  ansible.builtin.command: >
-    fin project create
-    --name={{ docksal_project_name }}
-    --choice=15
-    --yes
-  args:
-    chdir: "{{ docksal_user_home }}"
-  async: 300
-  poll: 15
-  become: true
-  become_user: "{{ docksal_user }}"
-  register: reg__fin_create
+- name: "Set preliminary testing facts."
+  ansible.builtin.set_fact:
+    fact__project_domain: "{{ docksal_project_name }}.docksal.site"
+    fact__project_directory: "{{ docksal_user_home }}/{{ docksal_project_name }}"
+    fact__project_config: "{{ docksal_user_home }}/{{ docksal_project_name }}/.docksal/docksal.env"
+    fact__project_containers:
+      - "{{ docksal_project_name }}_cli_1"
+      - "{{ docksal_project_name }}_web_1"
 
-- name: "TEMP | Debug reg__fin_create."
-  debug:
-    var: reg__fin_create
-
-- name: "Add project to /etc/hosts with 'fin hosts'."
-  ansible.builtin.command: "fin hosts add"
-  args:
-    chdir: "{{ docksal_user_home }}/{{ docksal_project_name }}"
-  become: true
-  become_user: "{{ docksal_user }}"
-
-- name: "TEMP | Debug /etc/hosts."
+- name: "Test crating a project with 'fin project create'."
   block:
+    - name: "Create new project."
+      ansible.builtin.command: >
+        fin project create
+        --name={{ docksal_project_name }}
+        --choice=15
+        --yes
+      args:
+        chdir: "{{ docksal_user_home }}"
+      async: 300
+      poll: 15
+      become: true
+      become_user: "{{ docksal_user }}"
+      register: reg__fin_create
+
+    - name: "Stat the project directory."
+      ansible.builtin.stat:
+        path: "{{ fact__project_directory }}"
+      changed_when: false
+      register: reg__project_directory
+
+    - name: "Verify | Project directory exists."
+      assert:
+        that:
+          - "reg__project_directory.stat.exists"
+          - "reg__project_directory.stat.isdir"
+        fail_msg: "The project directory does not exist."
+
+    - name: "Retrieve new project information."
+      ansible.builtin.command: "cat {{ fact__project_config }}"
+      args:
+        chdir: "{{ docksal_user_home }}"
+      changed_when: false
+      register: reg__project_env
+
+    - name: "Verify | Project config contents."
+      ansible.builtin.assert:
+        that: "docksal_project_env_contents in reg__project_env.stdout"
+        fail_msg: "The project could not be found, or the expected variable was not found in the project's env file."
+
+    - name: "Retrieve information about project containers."
+      ansible.builtin.command: "docker ps --format={% raw %}'{{.Names}} {{.State}}'{% endraw %} --filter='name={{ docksal_project_name }}'"
+      register: reg__project_containers
+
+    - name: "Verify | Project containers."
+      ansible.builtin.assert:
+        that: "'{{ container }} running' in reg__project_containers.stdout"
+        fail_msg: "The container '{{ container }}' was not present or not running."
+      loop: "{{ fact__project_containers }}"
+      loop_control:
+        loop_var: container
+
+- name: "Test adding the project's hostname to /etc/hosts with 'fin hosts add'."
+  block:
+    - name: "Add project to /etc/hosts."
+      ansible.builtin.command: "fin hosts add"
+      args:
+        chdir: "{{ docksal_user_home }}/{{ docksal_project_name }}"
+      become: true
+      become_user: "{{ docksal_user }}"
+
     - name: "Get /etc/hosts content."
       command: "cat /etc/hosts"
       register: reg__etc_hosts_content
 
-    - name: "Debug reg__etc_hosts_content"
-      debug:
-        var: reg__etc_hosts_content
-
-- name: "Retrieve new project information."
-  ansible.builtin.command: "cat {{ docksal_project_name }}/.docksal/docksal.env"
-  args:
-    chdir: "{{ docksal_user_home }}"
-  become: true
-  become_user: "{{ docksal_user }}"
-  changed_when: false
-  register: reg__project_env
-
-- name: "Pause for 1 minute to ensure Docksal server is ready."
-  pause:
-    minutes: 1
-
-- name: "TEMP | Debug Docksal status."
-  block:
-    - name: "Get Docksal status."
-      command: "fin system status"
-      register: reg__system_status
-
-    - name: "Debug Docksal status."
-      debug:
-        var: reg__system_status
-
-- name: "Try fetching project homepage contents with httpie."
-  command: "http http://{{ docksal_project_name }}.docksal.site"
-  register: reg__project_homepage_cli
-
-- name: "Debug reg__project_homepage_cli."
-  debug:
-    var: reg__project_homepage_cli
-
-- name: "Fetch project homepage contents."
-  ansible.builtin.uri:
-    url: "http://{{ docksal_project_name }}.docksal.site"
-    return_content: true
-  register: reg__project_homepage
-
-- name: "Verify | Project directory exists."
-  ansible.builtin.assert:
-    that: "docksal_project_env_contents in reg__project_env.stdout"
-    fail_msg: "The project could not be found, or the expected variable was not found in the project's env file."
-
-- name: "Verify | Retrieved homepage contents match expectations."
-  ansible.builtin.assert:
-    that: "docksal_project_contents in reg__project_homepage_cli.stdout"
-    # that:
-    #   - "docksal_project_contents in reg__project_homepage.content"
-    #   - "reg__project_homepage.status == 200"
-    fail_msg: "The homepage did not contain the expected contents, or returned a non-200 status code."
+    - name: "Verify the contents of /etc/hosts."
+      ansible.builtin.assert:
+        that: "fact__project_domain in reg__etc_hosts_content.stdout"
