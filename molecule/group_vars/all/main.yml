@@ -10,8 +10,8 @@ docksal_user_rc_file: "{{ docksal_user_home }}/.bashrc"
 docksal_global_config:
   - name: "DOCKSAL_VHOST_PROXY_IP"
     value: "0.0.0.0"
-  - name: "DOCKSAL_DNS_DOMAIN"
-    value: "docksal"
+  - name: "DOCKSAL_DNS_DISABLED"
+    value: "1"
   - name: "CI"
     value: "false"
 
