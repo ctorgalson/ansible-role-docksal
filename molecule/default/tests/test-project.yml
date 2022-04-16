@@ -45,6 +45,20 @@
   changed_when: false
   register: reg__project_env
 
+- name: "Pause for 1 minute to ensure Docksal server is ready."
+  pause:
+    minutes: 1
+
+- name: "TEMP | Debug Docksal status."
+  block:
+		- name: "Get Docksal status."
+      command: "fin system status"
+			register: reg__system_status
+
+		- name: "Debug Docksal status."
+			debug:
+				var: reg__system_status
+
 - name: "Try fetching project homepage contents with httpie."
   command: "http http://{{ docksal_project_name }}.docksal.site"
   register: reg__project_homepage_cli
