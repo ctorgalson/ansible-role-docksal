@@ -5,7 +5,7 @@
   ansible.builtin.command: >
     fin project create
     --name={{ docksal_project_name }}
-    --choice=18
+    --choice=15
     --yes
   args:
     chdir: "{{ docksal_user_home }}"
@@ -14,7 +14,6 @@
   become: true
   become_user: "{{ docksal_user }}"
   register: reg__fin_create
-  failed_when: false
 
 - name: "Add project to /etc/hosts with 'fin hosts'."
   ansible.builtin.command: "fin hosts add"
