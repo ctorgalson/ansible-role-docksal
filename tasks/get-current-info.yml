@@ -14,7 +14,7 @@
     fact__install: "{{ reg__fin_exists.rc != 0 }}"
 
 - name: "Docksal | Determine current Docksal version."
-  ansible.builtin.shell: "fin --version | cut -f3 -d' '"
+  ansible.builtin.shell: "fin --version | grep 'fin version' | cut -d' ' -f7"
   register: reg__current_version
   become: true
   become_user: "{{ docksal_user }}"
@@ -23,8 +23,8 @@
 
 - name: "Docksal | Set 'current' fact."
   ansible.builtin.set_fact:
-    fact__current: "{{ reg__current_version.stdout|default('0') }}"
+    fact__current: "{{ reg__current_version.stdout|default(false) }}"
 
 - name: "Docksal | Set 'update' fact."
   ansible.builtin.set_fact:
-    fact__update: "{{ not fact__install and fact__latest is version(fact__current, '>') }}"
+    fact__update: "{{ not fact__install and (not fact__latest is version(fact__current, '=')) }}"
