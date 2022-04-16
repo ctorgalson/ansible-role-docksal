@@ -51,13 +51,13 @@
 
 - name: "TEMP | Debug Docksal status."
   block:
-		- name: "Get Docksal status."
+    - name: "Get Docksal status."
       command: "fin system status"
-			register: reg__system_status
+      register: reg__system_status
 
-		- name: "Debug Docksal status."
-			debug:
-				var: reg__system_status
+    - name: "Debug Docksal status."
+      debug:
+        var: reg__system_status
 
 - name: "Try fetching project homepage contents with httpie."
   command: "http http://{{ docksal_project_name }}.docksal.site"
