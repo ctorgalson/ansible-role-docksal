@@ -15,6 +15,10 @@
   become_user: "{{ docksal_user }}"
   register: reg__fin_create
 
+- name: "TEMP | Debug reg__fin_create."
+  debug:
+    var: reg__fin_create
+
 - name: "Add project to /etc/hosts with 'fin hosts'."
   ansible.builtin.command: "fin hosts add"
   args:
