@@ -1,7 +1,7 @@
 ---
 # update tasks for ansible-role-docksal
 
-- name: "Docksal | Update fin binary to {{ fact__latest }} (was: {{ (fact__current == '0')|ternary('not installed', fact__current) }})."
+- name: "Docksal | Update fin binary to {{ fact__latest }} (was: {{ (not fact__current)|ternary('not installed', fact__current) }})."
   ansible.builtin.command: "fin update"
   become: true
   become_user: "{{ docksal_user }}"
