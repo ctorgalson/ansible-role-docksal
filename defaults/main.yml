@@ -3,7 +3,6 @@
 
 docksal_repo: "https://github.com/docksal/docksal.git"
 docksal_version: "master"
-# docksal_dest: "/tmp/docksal"
 docksal_fin_path: "/usr/local/bin/fin"
 docksal_user: "example"
 docksal_user_home: "/home/{{ docksal_user }}"
