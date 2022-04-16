@@ -45,6 +45,14 @@
   changed_when: false
   register: reg__project_env
 
+- name: "Try fetching project homepage contents with httpie."
+  command: "http http://{{ docksal_project_name }}.docksal.site"
+  register: reg__project_homepage_cli
+
+- name: "Debug reg__project_homepage_cli."
+  debug:
+    var: reg__project_homepage_cli
+
 - name: "Fetch project homepage contents."
   ansible.builtin.uri:
     url: "http://{{ docksal_project_name }}.docksal.site"
@@ -58,7 +66,8 @@
 
 - name: "Verify | Retrieved homepage contents match expectations."
   ansible.builtin.assert:
-    that:
-      - "docksal_project_contents in reg__project_homepage.content"
-      - "reg__project_homepage.status == 200"
+    that: "docksal_project_contents in reg__project_homepage_cli.stdout"
+    # that:
+    #   - "docksal_project_contents in reg__project_homepage.content"
+    #   - "reg__project_homepage.status == 200"
     fail_msg: "The homepage did not contain the expected contents, or returned a non-200 status code."
