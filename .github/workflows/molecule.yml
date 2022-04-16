@@ -20,7 +20,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          path: ${{ githu.repository }}
+          path: ${{ github.repository }}
       - name: Molecule
         uses: gofrolist/molecule-action@v2
         with:
