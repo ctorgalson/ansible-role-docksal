@@ -36,6 +36,7 @@
         --yes
       args:
         chdir: "{{ docksal_user_home }}"
+      creates: "{{ fact__project_directory }}"
       async: 300
       poll: 15
       become: true
@@ -72,7 +73,6 @@
       register: reg__project_containers
       changed_when: false
       become_user: "{{ docksal_user }}"
-      register: reg__fin_create
 
     - name: "Retrieve information about project containers (fin)."
       ansible.builtin.command: "fin p status"
@@ -81,7 +81,6 @@
       register: reg__project_containers_fin
       changed_when: false
       become_user: "{{ docksal_user }}"
-      register: reg__fin_create
 
     - name: "TEMP | Debug service facts."
       debug:
