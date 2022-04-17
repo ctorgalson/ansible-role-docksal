@@ -32,6 +32,16 @@
 
 - name: "Test crating a project with 'fin project create'."
   block:
+    - name: "Start Docker."
+      ansible.builtin.service:
+        name: "docker"
+        state: started
+
+    - name: "Start Docksal."
+      ansible.builtin.command: "fin system start"
+      become: true
+      become_user: "{{ docksal_user }}"
+
     - name: "Create new project."
       ansible.builtin.command: >
         fin project create
