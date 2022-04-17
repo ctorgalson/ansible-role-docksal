@@ -23,6 +23,9 @@
       - "{{ docksal_project_name }}_cli_1"
       - "{{ docksal_project_name }}_web_1"
 
+- name: "Get information about running services."
+  ansible.builtin.service_facts:
+
 - name: "Test crating a project with 'fin project create'."
   block:
     - name: "Create new project."
@@ -67,6 +70,14 @@
     - name: "Retrieve information about project containers."
       ansible.builtin.command: "docker ps --format={% raw %}'{{.Names}} {{.State}}'{% endraw %} --filter='name={{ docksal_project_name }}'"
       register: reg__project_containers
+
+    - name: "TEMP | Debug service facts."
+      debug:
+        var: ansible_facts.services
+
+    - name: "TEMP | Debug reg__project_containers"
+      debug:
+        var: reg__project_containers
 
     - name: "Verify | Project containers."
       ansible.builtin.assert:
