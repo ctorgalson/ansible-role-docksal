@@ -67,19 +67,33 @@
         that: "docksal_project_env_contents in reg__project_env.stdout"
         fail_msg: "The project could not be found, or the expected variable was not found in the project's env file."
 
-    - name: "Retrieve information about project containers."
-      ansible.builtin.shell: "docker ps --format={% raw %}'{{.Names}} {{.State}}'{% endraw %} --filter='name={{ docksal_project_name }}'"
-      args:
-        executable: "/bin/bash"
+    - name: "Retrieve information about project containers (docker)."
+      ansible.builtin.command: "docker ps --format={% raw %}'{{.Names}} {{.State}}'{% endraw %} --filter='name={{ docksal_project_name }}'"
       register: reg__project_containers
+      changed_when: false
+      become_user: "{{ docksal_user }}"
+      register: reg__fin_create
+
+    - name: "Retrieve information about project containers (fin)."
+      ansible.builtin.command: "fin p status"
+      args:
+        chdir: "{{ fact__project_directory }}"
+      register: reg__project_containers_fin
+      changed_when: false
+      become_user: "{{ docksal_user }}"
+      register: reg__fin_create
 
     - name: "TEMP | Debug service facts."
       debug:
         var: ansible_facts.services
 
-    - name: "TEMP | Debug reg__project_containers"
+    - name: "TEMP | Debug reg__project_containers (docker)"
       debug:
         var: reg__project_containers
+
+    - name: "TEMP | Debug reg__project_containers (fin)"
+      debug:
+        var: reg__project_containers_fin
 
     - name: "Verify | Project containers."
       ansible.builtin.assert:
