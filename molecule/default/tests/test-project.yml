@@ -36,7 +36,7 @@
         --yes
       args:
         chdir: "{{ docksal_user_home }}"
-      creates: "{{ fact__project_directory }}"
+        creates: "{{ fact__project_directory }}"
       async: 300
       poll: 15
       become: true
