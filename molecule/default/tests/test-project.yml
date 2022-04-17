@@ -76,6 +76,7 @@
       ansible.builtin.command: "docker ps --format={% raw %}'{{.Names}} {{.State}}'{% endraw %} --filter='name={{ docksal_project_name }}'"
       register: reg__project_containers
       changed_when: false
+      become: true
       become_user: "{{ docksal_user }}"
 
     - name: "Retrieve information about project containers (fin)."
@@ -84,6 +85,7 @@
         chdir: "{{ fact__project_directory }}"
       register: reg__project_containers_fin
       changed_when: false
+      become: true
       become_user: "{{ docksal_user }}"
 
     - name: "TEMP | Debug service facts."
