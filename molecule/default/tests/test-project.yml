@@ -69,6 +69,8 @@
 
     - name: "Retrieve information about project containers."
       ansible.builtin.shell: "docker ps --format={% raw %}'{{.Names}} {{.State}}'{% endraw %} --filter='name={{ docksal_project_name }}'"
+      args:
+        executable: "/bin/bash"
       register: reg__project_containers
 
     - name: "TEMP | Debug service facts."
