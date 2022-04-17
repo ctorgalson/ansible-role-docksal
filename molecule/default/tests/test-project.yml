@@ -68,7 +68,7 @@
         fail_msg: "The project could not be found, or the expected variable was not found in the project's env file."
 
     - name: "Retrieve information about project containers."
-      ansible.builtin.command: "docker ps --format={% raw %}'{{.Names}} {{.State}}'{% endraw %} --filter='name={{ docksal_project_name }}'"
+      ansible.builtin.shell: "docker ps --format={% raw %}'{{.Names}} {{.State}}'{% endraw %} --filter='name={{ docksal_project_name }}'"
       register: reg__project_containers
 
     - name: "TEMP | Debug service facts."
