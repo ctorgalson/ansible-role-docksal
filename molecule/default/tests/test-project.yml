@@ -26,6 +26,10 @@
 - name: "Get information about running services."
   ansible.builtin.service_facts:
 
+- name: "TEMP | Debug test facts."
+  debug:
+    var: fact__project_directory
+
 - name: "Test crating a project with 'fin project create'."
   block:
     - name: "Create new project."
