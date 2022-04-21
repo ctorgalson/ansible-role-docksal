@@ -38,7 +38,9 @@
         state: started
 
     - name: "Start Docksal."
-      ansible.builtin.command: "fin system start"
+      ansible.builtin.shell: "fin system start"
+      args:
+        executable: "/bin/bash"
       become: true
       become_user: "{{ docksal_user }}"
 
@@ -71,9 +73,10 @@
         fail_msg: "The project directory does not exist."
 
     - name: "Retrieve new project information."
-      ansible.builtin.command: "cat {{ fact__project_config }}"
+      ansible.builtin.shell: "cat {{ fact__project_config }}"
       args:
         chdir: "{{ docksal_user_home }}"
+        executable: "/bin/bash"
       changed_when: false
       register: reg__project_env
 
@@ -83,15 +86,18 @@
         fail_msg: "The project could not be found, or the expected variable was not found in the project's env file."
 
     - name: "Retrieve information about project containers (docker)."
-      ansible.builtin.command: "docker ps --format={% raw %}'{{.Names}} {{.State}}'{% endraw %} --filter='name={{ docksal_project_name }}'"
+      ansible.builtin.shell: "docker ps --format={% raw %}'{{.Names}} {{.State}}'{% endraw %} --filter='name={{ docksal_project_name }}'"
+      args:
+        executable: "/bin/bash"
       register: reg__project_containers
       changed_when: false
       become: true
       become_user: "{{ docksal_user }}"
 
     - name: "Retrieve information about project containers (fin)."
-      ansible.builtin.command: "fin p status"
+      ansible.builtin.shell: "fin p status"
       args:
+        executable: "/bin/bash"
         chdir: "{{ fact__project_directory }}"
       register: reg__project_containers_fin
       changed_when: false
@@ -121,8 +127,9 @@
 - name: "Test adding the project's hostname to /etc/hosts with 'fin hosts add'."
   block:
     - name: "Add project to /etc/hosts."
-      ansible.builtin.command: "fin hosts add"
+      ansible.builtin.shell: "fin hosts add"
       args:
+        executable: "/bin/bash"
         chdir: "{{ docksal_user_home }}/{{ docksal_project_name }}"
       become: true
       become_user: "{{ docksal_user }}"
