@@ -18,22 +18,25 @@ docksal_global_config:
 # Vars for prepare.yml.
 
 # Playbook-specific vars.
-docker_daemon_directory_path: "/etc/docker"
-# geerlingguy.docker vars.
-docker_users:
-  - "{{ docksal_user }}"
-docker_install_compose: true
+# docker_daemon_directory_path: "/etc/docker"
+# # geerlingguy.docker vars.
+# docker_users:
+#   - "{{ docksal_user }}"
+# docker_install_compose: true
+
 # geerlingguy.security vars.
 security_sudoers_passwordless:
   - "{{ docksal_user }}"
 security_autoupdate_enabled: false
 security_fail2ban_enabled: false
+
 # weareinteractive.apt vars.
 apt_packages:
   - "curl"
   - "git"
   - "httpie"
   - "openssh-server"
+
 # weareinteractive.users vars.
 users:
   - username: "{{ docksal_user }}"
