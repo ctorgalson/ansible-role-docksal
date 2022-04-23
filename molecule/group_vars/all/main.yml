@@ -8,30 +8,35 @@ docksal_user: "molecule"
 docksal_user_home: "/home/{{ docksal_user }}"
 docksal_user_rc_file: "{{ docksal_user_home }}/.bashrc"
 docksal_global_config:
-  - key: "DOCKSAL_VHOST_PROXY_IP"
+  - name: "DOCKSAL_VHOST_PROXY_IP"
     value: "0.0.0.0"
-  - key: "DOCKSAL_DNS_DOMAIN"
-    value: "docksal"
+  - name: "DOCKSAL_DNS_DISABLED"
+    value: "1"
+  - name: "CI"
+    value: "false"
 
 # Vars for prepare.yml.
 
 # Playbook-specific vars.
-docker_daemon_directory_path: "/etc/docker"
-# geerlingguy.docker vars.
-docker_users:
-  - "{{ docksal_user }}"
-docker_install_compose: true
+# docker_daemon_directory_path: "/etc/docker"
+# # geerlingguy.docker vars.
+# docker_users:
+#   - "{{ docksal_user }}"
+# docker_install_compose: true
+
 # geerlingguy.security vars.
 security_sudoers_passwordless:
   - "{{ docksal_user }}"
 security_autoupdate_enabled: false
 security_fail2ban_enabled: false
+
 # weareinteractive.apt vars.
 apt_packages:
   - "curl"
   - "git"
   - "httpie"
   - "openssh-server"
+
 # weareinteractive.users vars.
 users:
   - username: "{{ docksal_user }}"

@@ -1,0 +1,11 @@
+---
+# latest info tasks for ansible-role-docksal
+
+- name: "Docksal | Determine cloned Docksal version."
+  ansible.builtin.shell: "grep '^FIN_VERSION=' {{ tmp_fin_path }} | cut -f2 -d'='"
+  register: reg__cloned_version
+  changed_when: false
+
+- name: "Docksal | Set 'latest' fact."
+  ansible.builtin.set_fact:
+    fact__latest: "{{ reg__cloned_version.stdout }}"

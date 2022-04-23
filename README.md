@@ -1,6 +1,6 @@
 # Ansible Role Docksal
 
-![Molecule Test](https://github.com/ctorgalson/ansible-role-docksal/workflows/Molecule%20Test/badge.svg)
+[![Molecule Test](https://github.com/ctorgalson/ansible-role-docksal/actions/workflows/molecule.yml/badge.svg)](https://github.com/ctorgalson/ansible-role-docksal/actions/workflows/molecule.yml)
 
 This role idempotently installs [Docksal](https://docksal.io/) on Ubuntu/Debian systems.
 

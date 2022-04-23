@@ -1,0 +1,143 @@
+---
+# Tests creation and operation of simple Docksal project.
+#
+# Specifically, we test the following:
+#
+#   - that we CAN use fin to create a project (fin project create),
+#   - that we CAN use fin to write to /etc/hosts (fin hosts add),
+#   - that the project's directory was created,
+#   - that the project's config file is correctly created,
+#   - that the project's expected containers are running,
+#   - that /etc/hosts contains the project's hostname,
+#
+# We can't reliably do an http request to test the server in every environment,
+# so we infer if the server is operating correctly by checking for running
+# Docker containers.
+
+- name: "Set preliminary testing facts."
+  ansible.builtin.set_fact:
+    fact__project_domain: "{{ docksal_project_name }}.docksal.site"
+    fact__project_directory: "{{ docksal_user_home }}/{{ docksal_project_name }}"
+    fact__project_config: "{{ docksal_user_home }}/{{ docksal_project_name }}/.docksal/docksal.env"
+    fact__project_containers:
+      - "{{ docksal_project_name }}_cli_1"
+      - "{{ docksal_project_name }}_web_1"
+
+- name: "Get information about running services."
+  ansible.builtin.service_facts:
+
+- name: "TEMP | Debug test facts."
+  debug:
+    var: fact__project_directory
+
+- name: "Test crating a project with 'fin project create'."
+  block:
+    - name: "Start Docker."
+      ansible.builtin.service:
+        name: "docker"
+        state: started
+
+    - name: "Start Docksal."
+      ansible.builtin.shell: "fin system start"
+      args:
+        executable: "/bin/bash"
+      become: true
+      become_user: "{{ docksal_user }}"
+
+    - name: "Create new project."
+      ansible.builtin.command: >
+        fin project create
+        --name={{ docksal_project_name }}
+        --choice=15
+        --yes
+      args:
+        chdir: "{{ docksal_user_home }}"
+        creates: "{{ fact__project_directory }}"
+      async: 300
+      poll: 15
+      become: true
+      become_user: "{{ docksal_user }}"
+      register: reg__fin_create
+
+    - name: "Stat the project directory."
+      ansible.builtin.stat:
+        path: "{{ fact__project_directory }}"
+      changed_when: false
+      register: reg__project_directory
+
+    - name: "Verify | Project directory exists."
+      assert:
+        that:
+          - "reg__project_directory.stat.exists"
+          - "reg__project_directory.stat.isdir"
+        fail_msg: "The project directory does not exist."
+
+    - name: "Retrieve new project information."
+      ansible.builtin.shell: "cat {{ fact__project_config }}"
+      args:
+        chdir: "{{ docksal_user_home }}"
+        executable: "/bin/bash"
+      changed_when: false
+      register: reg__project_env
+
+    - name: "Verify | Project config contents."
+      ansible.builtin.assert:
+        that: "docksal_project_env_contents in reg__project_env.stdout"
+        fail_msg: "The project could not be found, or the expected variable was not found in the project's env file."
+
+    - name: "Retrieve information about project containers (docker)."
+      ansible.builtin.shell: "docker ps --format={% raw %}'{{.Names}} {{.State}}'{% endraw %} --filter='name={{ docksal_project_name }}'"
+      args:
+        executable: "/bin/bash"
+      register: reg__project_containers
+      changed_when: false
+      become: true
+      become_user: "{{ docksal_user }}"
+
+    - name: "Retrieve information about project containers (fin)."
+      ansible.builtin.shell: "fin p status"
+      args:
+        executable: "/bin/bash"
+        chdir: "{{ fact__project_directory }}"
+      register: reg__project_containers_fin
+      changed_when: false
+      become: true
+      become_user: "{{ docksal_user }}"
+
+    - name: "TEMP | Debug service facts."
+      debug:
+        var: ansible_facts.services
+
+    - name: "TEMP | Debug reg__project_containers (docker)"
+      debug:
+        var: reg__project_containers
+
+    - name: "TEMP | Debug reg__project_containers (fin)"
+      debug:
+        var: reg__project_containers_fin
+
+    - name: "Verify | Project containers."
+      ansible.builtin.assert:
+        that: "'{{ container }} running' in reg__project_containers.stdout"
+        fail_msg: "The container '{{ container }}' was not present or not running."
+      loop: "{{ fact__project_containers }}"
+      loop_control:
+        loop_var: container
+
+- name: "Test adding the project's hostname to /etc/hosts with 'fin hosts add'."
+  block:
+    - name: "Add project to /etc/hosts."
+      ansible.builtin.shell: "fin hosts add"
+      args:
+        executable: "/bin/bash"
+        chdir: "{{ docksal_user_home }}/{{ docksal_project_name }}"
+      become: true
+      become_user: "{{ docksal_user }}"
+
+    - name: "Get /etc/hosts content."
+      command: "cat /etc/hosts"
+      register: reg__etc_hosts_content
+
+    - name: "Verify the contents of /etc/hosts."
+      ansible.builtin.assert:
+        that: "fact__project_domain in reg__etc_hosts_content.stdout"

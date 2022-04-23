@@ -1,33 +1,77 @@
 ---
 # tasks file for ansible-role-docksal
 
-- name: Install Docksal.
-  include_tasks: "docksal-install.yml"
+# Because we need a way to compare installed version to latest version, we
+# download Docksal every time the role runs. Docksal itself does the same
+# thing to determine whether or not it needs updating, so 🤷.
 
-- name: Include global Docksal config tasks.
-  include_tasks:
-    file: "docksal-global-config.yml"
-    apply:
-      tags:
-        - docksal
-  loop: "{{ docksal_global_config }}"
-  loop_control:
-    loop_var: variable
+- name: "Docksal | Set up to download Docksal and clone repository."
+  block:
+    - name: "Docksal | Create a temporary directory."
+      ansible.builtin.tempfile:
+        state: "directory"
+        suffix: "docksal"
+      register: reg__tmp_dir
+      changed_when: false
 
-- name: Reset the Docksal system.
-  command: "{{ docksal_fin_path }} system reset"
-  args:
-    chdir: "{{ docksal_user_home }}"
+    - name: "Docksal | Set tmp dir fact."
+      ansible.builtin.set_fact:
+        tmp_dir_path: "{{ reg__tmp_dir.path }}"
+        tmp_fin_path: "{{ reg__tmp_dir.path }}/bin/fin"
+
+    - name: "Docksal | Clone Docksal repository."
+      ansible.builtin.git:
+        repo: "{{ docksal_repo }}"
+        dest: "{{ tmp_dir_path }}"
+        depth: 1
+        version: "{{ docksal_version }}"
+      changed_when: false
+
+- name: "Docksal | Include fin latest info tasks."
+  ansible.builtin.include_tasks: "get-latest-info.yml"
+
+- name: "Docksal | Include fin current info tasks."
+  ansible.builtin.include_tasks: "get-current-info.yml"
+
+- name: "Docksal | Include fin binary install tasks."
+  ansible.builtin.include_tasks: "install-fin.yml"
+  when: "fact__install or fact__update"
+
+- name: "Docksal | Remove the temporary directory."
+  ansible.builtin.file:
+    path: "{{ tmp_dir_path }}"
+    state: "absent"
   changed_when: false
-  become: true
-  become_user: "{{ docksal_user }}"
 
-- name: Update Docksal.
-  command: "fin update"
-  # There seems to be no reliable way to figure out if anything has changed
-  # when this command runs--it ALWAYS reports 'Pulling from...' or 'downloaded'
-  # etc. So we sacrifice a bit of strict idempotency for the option to reliably
-  # use --check when running playbooks containing this role.
-  changed_when: false
-  become: true
-  become_user: "{{ docksal_user }}"
+- name: "Docksal | Include fin binary update tasks."
+  ansible.builtin.include_tasks: "update-fin.yml"
+  when: "fact__install or fact__update"
+
+- name: "Docksal | Set global configuration where needed."
+  block:
+    - name: "Docksal | Start docksal system."
+      ansible.builtin.command: "fin system start"
+      become: true
+      become_user: "{{ docksal_user }}"
+      changed_when: false
+
+    - name: "Docksal | Set global variables."
+      ansible.builtin.include_tasks: "set-global-config.yml"
+      loop: "{{ docksal_global_config }}"
+      loop_control:
+        loop_var: config
+
+    - name: "Docksal | Reset the system."
+      command: "fin system reset"
+      args:
+        chdir: "{{ docksal_user_home }}"
+      changed_when: false
+      become: true
+      become_user: "{{ docksal_user }}"
+      changed_when: false
+
+    - name: "Docksal | Stop docksal system."
+      ansible.builtin.command: "fin system stop"
+      become: true
+      become_user: "{{ docksal_user }}"
+      changed_when: false

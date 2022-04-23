@@ -1,0 +1,21 @@
+---
+# global config tasks file for ansible-role-docksal
+
+- name: "Get current value of {{ config.name }}."
+  command: "fin config get --global --env {{ config.name }}"
+  args:
+    chdir: "{{ docksal_user_home }}"
+  register: reg__fin_config_get
+  changed_when: false
+  no_log: true
+  become: true
+  become_user: "{{ docksal_user }}"
+
+- name: "Set '{{ config.name }}' to '{{ (config.secret is defined|ternary('[redacted]', config.value)) }}'."
+  command: "fin config set --global {{ config.name }}={{ config.value }}"
+  args:
+    chdir: "{{ docksal_user_home }}"
+  no_log: "{{ config.secret is defined }}"
+  when: "config.value not in reg__fin_config_get.stdout"
+  become: true
+  become_user: "{{ docksal_user }}"

@@ -1,0 +1,22 @@
+---
+# Tests that 'fin' is correctly installed.
+
+- name: "Retrieve information about the fin command."
+  ansible.builtin.shell: "command -v fin"
+  args:
+    executable: "/bin/bash"
+  register: reg__fin_location
+  changed_when: false
+
+- name: "Retrieve fin version."
+  ansible.builtin.command: "fin --version"
+  register: reg__fin_version
+  changed_when: false
+
+- name: "Verify | The fin binary is present and working in the expected location."
+  ansible.builtin.assert:
+    that:
+      - "reg__fin_location.stdout == docksal_fin_path"
+      - "'fin version' in reg__fin_version.stdout"
+      - "reg__fin_version.rc == 0"
+    fail_msg: "The fin binary was not found at the expected path."

@@ -1,0 +1,25 @@
+---
+# Run Molecule test of role in Gitlab CI.
+image: qwe1/dind-ansible-molecule:latest
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+
+services:
+  - docker:dind
+
+stages:
+  - test
+
+before_script:
+  - docker info
+  - ansible --version
+  - molecule --version
+
+test_molecule:
+  stage: test
+  variables:
+    MOLECULE_DISTRO: geerlingguy/docker-ubuntu2004-ansible:testing
+  script:
+    - molecule test
