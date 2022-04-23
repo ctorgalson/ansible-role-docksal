@@ -19,8 +19,6 @@ before_script:
 
 test_molecule:
   stage: test
-  tags:
-    - ansible
   variables:
     MOLECULE_DISTRO: geerlingguy/docker-ubuntu2004-ansible:testing
   script:
