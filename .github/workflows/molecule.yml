@@ -17,7 +17,9 @@ jobs:
         with:
           path: "${{ github.repository }}"
       - name: DEBUG
-        run: ls -hal
+        run: |
+					ls -hal ctorgalson
+					echo "${{ github.repository }}"
       - name: Molecule
         uses: gofrolist/molecule-action@v2
         with:
