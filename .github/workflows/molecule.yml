@@ -1,4 +1,8 @@
 ---
+name: Molecule Test
+
+on: [push]
+
 jobs:
   molecule:
     runs-on: ubuntu-latest
