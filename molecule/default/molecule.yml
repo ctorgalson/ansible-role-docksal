@@ -12,7 +12,8 @@ driver:
 platforms:
   - name: instance
     # geerlingguy/docker-ubuntu2204-ansible
-    image: geerlingguy/docker-${MOLECULE_UBUNTU_VERSION:-"ubuntu2004"}-ansible:latest
+    #      geerlingguy/docker-ubuntu2204-ansible:latest
+    image: geerlingguy/docker-${MOLECULE_UBUNTU_VERSION:-"ubuntu2204"}-ansible:latest
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
