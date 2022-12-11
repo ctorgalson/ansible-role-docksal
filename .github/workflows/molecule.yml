@@ -21,7 +21,8 @@ jobs:
           ls -hal
           sudo apt update
           sudo apt install python3-setuptools
-          python3 -m pip install --upgrade pip
+          python3 -m pip install docker
+          #python3 -m pip install --upgrade pip
           ./scripts/install-python-dependencies.sh
       - name: Test with molecule
         run: |
