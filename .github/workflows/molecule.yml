@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
         MOLECULE_UBUNTU_VERSION:
-					- 22.04
+					- "22.04"
         # scenario:
         #   - centos-8
         #   - debian-10
