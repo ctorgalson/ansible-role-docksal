@@ -20,7 +20,7 @@ jobs:
       - name: DEBUG
         run: |
           pwd
-          ls -hal ctorgalson
+          ls -Rhal .
           echo "${{ github.repository }}"
       - name: Molecule
         uses: gofrolist/molecule-action@v2
