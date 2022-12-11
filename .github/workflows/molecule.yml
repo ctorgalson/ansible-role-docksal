@@ -23,6 +23,8 @@ jobs:
           echo "${{ github.repository }}"
       - name: Molecule
         uses: gofrolist/molecule-action@v2
+        with:
+          molecule_working_dir: /home/runner/work/ctorgalson/ansible-role-docksal
         # with:
         #   molecule_working_dir: ctorgalson
         #   # molecule_options: --debug --base-config molecule/_shared/base.yml
