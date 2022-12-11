@@ -8,7 +8,7 @@ jobs:
       max-parallel: 4
       matrix:
         python-version: [3.10]
-        MOLECULE_UBUNTU_VERSION: "22.04"
+        MOLECULE_UBUNTU_VERSION: ["22.04"]
 
     steps:
       - uses: actions/checkout@v1
