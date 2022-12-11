@@ -11,12 +11,6 @@ jobs:
       matrix:
         MOLECULE_UBUNTU_VERSION:
           - "22.04"
-        # scenario:
-        #   - centos-8
-        #   - debian-10
-        #   - fedora-34
-        #   - oraclelinux-8
-        #   - ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -25,7 +19,7 @@ jobs:
       - name: Molecule
         uses: gofrolist/molecule-action@v2
         with:
-          molecule_options: --debug --base-config molecule/_shared/base.yml
+          # molecule_options: --debug --base-config molecule/_shared/base.yml
           molecule_command: test
           # molecule_args: --scenario-name ${{ matrix.scenario }}
         env:
