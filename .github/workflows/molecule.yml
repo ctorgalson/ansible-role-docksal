@@ -19,6 +19,7 @@ jobs:
           path: "${{ github.repository }}"
       - name: DEBUG
         run: |
+          pwd
           ls -hal ctorgalson
           echo "${{ github.repository }}"
       - name: Molecule
