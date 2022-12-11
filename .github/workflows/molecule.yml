@@ -7,13 +7,14 @@ jobs:
   molecule:
     runs-on: ubuntu-latest
     strategy:
+      max-parallel: 4
       fail-fast: false
       matrix:
         MOLECULE_UBUNTU_VERSION:
           - "22.04"
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: "${{ github.repository }}"
       - name: DEBUG
@@ -22,11 +23,11 @@ jobs:
           echo "${{ github.repository }}"
       - name: Molecule
         uses: gofrolist/molecule-action@v2
-        with:
-          molecule_working_dir: ctorgalson
-          # molecule_options: --debug --base-config molecule/_shared/base.yml
-          molecule_command: test
-          # molecule_args: --scenario-name ${{ matrix.scenario }}
+        # with:
+        #   molecule_working_dir: ctorgalson
+        #   # molecule_options: --debug --base-config molecule/_shared/base.yml
+        #   molecule_command: test
+        #   # molecule_args: --scenario-name ${{ matrix.scenario }}
         env:
           ANSIBLE_FORCE_COLOR: '1'
 
