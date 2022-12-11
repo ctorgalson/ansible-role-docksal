@@ -1,7 +1,5 @@
 # Vars for converge.yml/all.
-
-ansible_remote_tmp: "/tmp"
-
+#
 # Note: we're redefining all the vars used in the role's defaults/main.yml file
 # since prepare.yml and verify.yml don't run the role. And because there're
 # only six of them :)

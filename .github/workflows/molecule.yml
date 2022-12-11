@@ -32,7 +32,8 @@ jobs:
         #   molecule_command: test
         #   # molecule_args: --scenario-name ${{ matrix.scenario }}
         env:
-          ANSIBLE_FORCE_COLOR: '1'
+          ANSIBLE_FORCE_COLOR: "1"
+          ANSIBLE_ASYNC_DIR: "/tmp/.ansible_async"
 
 # jobs:
 #   test:
