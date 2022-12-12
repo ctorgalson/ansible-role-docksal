@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         image:
-          - "ubuntu2204"
+          - "ubuntu:20.04"
     steps:
       - name: checkout
         uses: actions/checkout@v3
