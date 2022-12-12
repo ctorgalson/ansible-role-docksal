@@ -9,17 +9,23 @@
 
 - name: Install Docksal if it's not already present.
   block:
-    - name: Clone Docksal into {{ docksal_dest }}.
-      git:
-        repo: "{{ docksal_repo }}"
-        dest: "{{ docksal_dest }}"
-        version: "master"
+    - name: Download docksal binary.
+      ansible.builtin.get_url:
+        url: "https://raw.githubusercontent.com/docksal/docksal/{{ docksal_version|default('master') }}/bin/fin"
+        dest: "/usr/local/bin/fin"
+        mode: "0755"
 
-    - name: Copy fin binary into place.
-      copy:
-        src: "{{ docksal_dest }}/bin/fin"
-        dest: "{{ docksal_fin_path }}"
-        mode: "a+x"
-        remote_src: true
+    #- name: Clone Docksal into {{ docksal_dest }}.
+    #  git:
+    #    repo: "{{ docksal_repo }}"
+    #    dest: "{{ docksal_dest }}"
+    #    version: "master"
+
+    #- name: Copy fin binary into place.
+    #  copy:
+    #    src: "{{ docksal_dest }}/bin/fin"
+    #    dest: "{{ docksal_fin_path }}"
+    #    mode: "a+x"
+    #    remote_src: true
 
   when: "docksal_exists.rc != 0"
