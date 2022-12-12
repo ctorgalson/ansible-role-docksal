@@ -12,18 +12,26 @@ jobs:
         image:
           - "ubuntu2204"
     steps:
-      - name: Checkout
+      - name: checkout
         uses: actions/checkout@v3
-      - name: Molecule
-        uses: gofrolist/molecule-action@v2
         with:
-          molecule_options: --debug
-          molecule_command: test
-        env:
-          MOLECULE_UBUNTU_IMAGE: ${{ matrix.image }}
-          ANSIBLE_ASYNC_DIR: "/tmp/.ansible_async"
-          ANSIBLE_LOCAL_TEMP: "/tmp"
-          ANSIBLE_FORCE_COLOR: "1"
+          path: "${{ github.repository }}"
+      - name: molecule
+        uses: robertdebock/molecule-action@4.0.9
+        with:
+          image: "${{ matrix.image }}"
+      # - name: Checkout
+      #   uses: actions/checkout@v3
+      # - name: Molecule
+      #   uses: gofrolist/molecule-action@v2
+      #   with:
+      #     molecule_options: --debug
+      #     molecule_command: test
+      #   env:
+      #     MOLECULE_UBUNTU_IMAGE: ${{ matrix.image }}
+      #     ANSIBLE_ASYNC_DIR: "/tmp/.ansible_async"
+      #     ANSIBLE_LOCAL_TEMP: "/tmp"
+      #     ANSIBLE_FORCE_COLOR: "1"
 
 
 # name: Molecule Test
