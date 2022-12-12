@@ -7,7 +7,6 @@ jobs:
   molecule:
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix:
         image:
           - "ubuntu2204"
@@ -20,6 +19,7 @@ jobs:
         uses: robertdebock/molecule-action@4.0.9
         with:
           image: "${{ matrix.image }}"
+          command: "--debug test"
       # - name: Checkout
       #   uses: actions/checkout@v3
       # - name: Molecule
