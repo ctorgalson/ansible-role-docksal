@@ -1,6 +1,5 @@
 ---
-name: Molecule Test
-
+name: CI
 'on':
   pull_request:
   push:
@@ -14,6 +13,27 @@ defaults:
     working-directory: 'ctorgalson.docksal'
 
 jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the codebase.
+        uses: actions/checkout@v2
+        with:
+          path: 'ctorgalson.docksal'
+
+      - name: Set up Python 3.
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install test dependencies.
+        run: pip3 install yamllint
+
+      - name: Lint code.
+        run: |
+          yamllint .
+
   molecule:
     name: Molecule
     runs-on: ubuntu-latest
@@ -21,7 +41,7 @@ jobs:
       matrix:
         distro:
           - ubuntu2204
-          # - ubuntu2004
+          - ubuntu2004
 
     steps:
       - name: Check out the codebase.
@@ -43,97 +63,3 @@ jobs:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
           MOLECULE_DISTRO: ${{ matrix.distro }}
-
-# jobs:
-#   molecule:
-#     runs-on: ubuntu-latest
-#     strategy:
-#       matrix:
-#         image:
-#           - "ubuntu:20.04"
-#     steps:
-#       - name: checkout
-#         uses: actions/checkout@v3
-#         with:
-#           path: "${{ github.repository }}"
-#       - name: molecule
-#         uses: robertdebock/molecule-action@4.0.9
-#         with:
-#           image: "${{ matrix.image }}"
-#           command: "--debug test"
-#       # - name: Checkout
-#       #   uses: actions/checkout@v3
-#       # - name: Molecule
-#       #   uses: gofrolist/molecule-action@v2
-#       #   with:
-#       #     molecule_options: --debug
-#       #     molecule_command: test
-#       #   env:
-#       #     MOLECULE_UBUNTU_IMAGE: ${{ matrix.image }}
-#       #     ANSIBLE_ASYNC_DIR: "/tmp/.ansible_async"
-#       #     ANSIBLE_LOCAL_TEMP: "/tmp"
-#       #     ANSIBLE_FORCE_COLOR: "1"
-
-
-# name: Molecule Test
-#
-# on: [push]
-#
-# jobs:
-#   molecule:
-#     runs-on: ubuntu-latest
-#     strategy:
-#       max-parallel: 4
-#       fail-fast: false
-#       matrix:
-#         MOLECULE_UBUNTU_VERSION:
-#           - "ubuntu2204"
-#     steps:
-#       - name: Checkout
-#         uses: actions/checkout@v3
-#         # with:
-#         #   path: "${{ github.repository }}"
-#       - name: DEBUG
-#         run: |
-#           pwd
-#           ls -Rhal .
-#           echo "${{ github.repository }}"
-#       - name: Molecule
-#         uses: gofrolist/molecule-action@v2
-#         with:
-#           molecule_working_dir: /home/runner/work/ansible-role-docksal/ansible-role-docksal
-#         # with:
-#         #   molecule_working_dir: ctorgalson
-#         #   # molecule_options: --debug --base-config molecule/_shared/base.yml
-#         #   molecule_command: test
-#         #   # molecule_args: --scenario-name ${{ matrix.scenario }}
-#         env:
-#           ANSIBLE_FORCE_COLOR: "1"
-#           ANSIBLE_ASYNC_DIR: "/tmp/.ansible_async"
-#
-# # jobs:
-# #   test:
-# #     runs-on: ubuntu-22.04
-# #     strategy:
-# #       max-parallel: 4
-# #       matrix:
-# #         python-version: ["3.10.8"]
-# #         MOLECULE_UBUNTU_VERSION: ["22.04"]
-# #
-# #     steps:
-# #       - uses: actions/checkout@v1
-# #       - name: Set up Python ${{ matrix.python-version }}
-# #         uses: actions/setup-python@v1
-# #         with:
-# #           python-version: ${{ matrix.python-version }}
-# #       - name: Install dependencies
-# #         run: |
-# #           ls -hal
-# #           sudo apt update
-# #           sudo apt install python3-setuptools
-# #           python3 -m pip install docker
-# #           #python3 -m pip install --upgrade pip
-# #           ./scripts/install-python-dependencies.sh
-# #       - name: Test with molecule
-# #         run: |
-# #           molecule --debug test
