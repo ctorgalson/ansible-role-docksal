@@ -8,4 +8,4 @@ docksal_user: "example"
 docksal_user_home: "/home/{{ docksal_user }}"
 docksal_global_config: []
 
-docksal_version: "v1.110.1"
+docksal_version: "v1.17.0"
