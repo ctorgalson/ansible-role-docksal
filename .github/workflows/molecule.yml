@@ -6,9 +6,6 @@ on: [push]
 jobs:
   molecule:
     runs-on: ubuntu-latest
-    env:
-      ANSIBLE_ASYNC_DIR: "/tmp/.ansible_async"
-      ANSIBLE_LOCAL_TEMP: "/tmp"
     strategy:
       fail-fast: false
       matrix:
@@ -17,16 +14,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        # with:
-        #   path: ${{ github.repository }}
       - name: Molecule
         uses: gofrolist/molecule-action@v2
         with:
           molecule_options: --debug
           molecule_command: test
         env:
-          ANSIBLE_FORCE_COLOR: "1"
           MOLECULE_UBUNTU_IMAGE: ${{ matrix.image }}
+					ANSIBLE_ASYNC_DIR: "/tmp/.ansible_async"
+					ANSIBLE_LOCAL_TEMP: "/tmp"
+					ANSIBLE_FORCE_COLOR: "1"
 
 
 # name: Molecule Test
