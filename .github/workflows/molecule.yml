@@ -40,7 +40,7 @@ jobs:
     strategy:
       matrix:
         distro:
-          - ubuntu2204
+          #- ubuntu2204
           - ubuntu2004
 
     steps:
