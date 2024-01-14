@@ -19,7 +19,7 @@
       copy:
         src: "{{ docksal_dest }}/bin/fin"
         dest: "{{ docksal_fin_path }}"
-        mode: "a+x"
+        mode: "a+rx"
         remote_src: true
 
   when: "docksal_exists.rc != 0"
