@@ -22,14 +22,6 @@ happen. Either:
 
 ## Role Variables
 
-| Variable name | Default value | Description |
-|---------------|---------------|-------------|
-| `docksal_repo`          | `https://github.com/docksal/docksal.git` | The github url to the Docksal repository. Should seldom need changing. |
-| `docksal_dest`          | `/tmp/docksal` | The temporary location for the repository on the remote system. |
-| `docksal_fin_path`      | `/usr/local/bin/fin` | The path to the `fin` binary, post-install. |
-| `docksal_user`          | `example` | The user to install Docksal for. |
-| `docksal_global_config` | `[]` | Docksal global configuration variables to pass to `fin config set --global` (see sample playbook, below, for syntax). |
-
 | Variable name | Default value | Location | Description |
 |---------------|---------------|----------|-------------|
 | `docksal__bin_dir`         | `/usr/local/bin`             | `vars/main.yml`     | The directory to install the `fin` binary to. |
