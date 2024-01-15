@@ -1,9 +1,6 @@
 ---
-# defaults file for ansible-role-docksal
+# Defaults file for ansible-role-docksal.
 
-docksal_repo: "https://github.com/docksal/docksal.git"
-docksal_dest: "/tmp/docksal"
-docksal_fin_path: "/usr/local/bin/fin"
-docksal_user: "example"
-docksal_user_home: "/home/{{ docksal_user }}"
-docksal_global_config: []
+docksal__user: "{{ ansible_user }}"
+docksal__docksal_version: "master"
+docksal__global_config: []

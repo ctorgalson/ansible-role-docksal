@@ -1,33 +1,38 @@
 ---
-# tasks file for ansible-role-docksal
+# Supervisory tasks for ansible-role-docksal.
 
-- name: Install Docksal.
-  include_tasks: "docksal-install.yml"
+- name: "Docksal | get existing fin and docksal versions."
+  block:
+    - name: "Docksal | find out if the fin command is already present."
+      stat:
+        path: "{{ docksal__fin_path }}"
+      register: "dl__stat_fin"
 
-- name: Include global Docksal config tasks.
+    - name: "Docksal | find out the fin and docksal versions."
+      command: "fin --version"
+      become: true
+      become_user: "{{ docksal_user|default(ansible_user) }}"
+      register: "dl__fin_version"
+      check_mode: false
+      changed_when: false
+      when: "dl__stat_fin.stat.exists"
+
+    - name: "Docksal | extract fin and docksal versions."
+      set_fact:
+        dl__docksal_version: "{{ dl__fin_version.stdout_lines[0]|regex_search('[v0-9\\.]+$') }}"
+        dl__fin_version: "{{ dl__fin_version.stdout_lines[1]|regex_search('[v0-9\\.]+$') }}"
+      when: "dl__stat_fin.stat.exists"
+
+- name: "Docksal | include install tasks."
+  include_tasks: "install.yml"
+  when: >
+    not dl__stat_fin.stat.exists
+    or docksal__docksal_version == 'master'
+    or dl__docksal_version != docksal__docksal_version
+
+- name: "Docksal | include global config tasks."
   include_tasks:
-    file: "docksal-global-config.yml"
-    apply:
-      tags:
-        - docksal
-  loop: "{{ docksal_global_config }}"
+    file: "config.yml"
+  loop: "{{ docksal__global_config }}"
   loop_control:
-    loop_var: variable
-
-- name: Reset the Docksal system.
-  command: "{{ docksal_fin_path }} system reset"
-  args:
-    chdir: "{{ docksal_user_home }}"
-  changed_when: false
-  become: true
-  become_user: "{{ docksal_user }}"
-
-- name: Update Docksal.
-  command: "fin update"
-  # There seems to be no reliable way to figure out if anything has changed
-  # when this command runs--it ALWAYS reports 'Pulling from...' or 'downloaded'
-  # etc. So we sacrifice a bit of strict idempotency for the option to reliably
-  # use --check when running playbooks containing this role.
-  changed_when: false
-  become: true
-  become_user: "{{ docksal_user }}"
+    loop_var: "variable"
