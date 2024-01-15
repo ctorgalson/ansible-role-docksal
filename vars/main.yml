@@ -1,0 +1,5 @@
+---
+# Vars file for ansible-role-docksal.
+
+docksal__bin_dir: "/usr/local/bin"
+docksal__fin_path: "{{ docksal__bin_dir }}/fin"

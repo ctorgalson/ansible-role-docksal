@@ -1,0 +1,44 @@
+---
+# Install tasks for ansible-role-docksal.
+#
+# @see https://get.docksal.io/
+#
+# sudo mkdir -p /usr/local/bin &&
+# sudo curl \
+#   -fsSL "https://raw.githubusercontent.com/docksal/docksal/${DOCKSAL_VERSION}/bin/fin?r=${RANDOM}" \
+#   -o /usr/local/bin/fin && sudo chmod +x /usr/local/bin/fin && fin update
+
+- name: "Docksal | ensure {{ docksal__bin_dir }}/ exists."
+  ansible.builtin.file:
+    path: "{{ docksal__bin_dir }}"
+    state: "directory"
+
+# TODO: instead of downloading directly, we could revert to downloading to a
+#   tmp directory and comparing the checksum of the downloaded file with the
+#   installed version (if any).
+- name: "Docksal | download fin script to {{ docksal__fin_path }}."
+  ansible.builtin.get_url:
+    url: "https://raw.githubusercontent.com/docksal/docksal/{{ dl__docksal_version|default('master') }}/bin/fin?r={{ lookup('community.general.random_string') }}"
+    dest: "{{ docksal__fin_path }}"
+    mode: "a+rx"
+
+- name: "Docksal | update fin."
+  command: "fin update"
+  changed_when: false
+
+# `fin update` seems to get the chmod wrong on its own binary, at least some of
+# the time: we set the mode in the get_url task, but they're wrong by the time
+# fin update has run.
+- name: "Docksal | ensure fin binary has correct permissions."
+  command: "chmod a+rx {{ docksal__fin_path }}"
+  changed_when: false
+
+- name: "Docksal | get new fin version."
+  command: "fin --version"
+  become: true
+  become_user: "{{ docksal_user|default(ansible_user) }}"
+  register: "dl__fin_update_version"
+  check_mode: false
+  changed_when: >
+    dl__fin_version is not defined
+    or dl__fin_version not in dl__fin_update_version.stdout
