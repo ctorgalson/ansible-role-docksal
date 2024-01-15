@@ -22,8 +22,8 @@ happen. Either:
 
 ## Role Variables
 
-| Variable name | Default value | Location | Description |
-|---------------|---------------|----------|-------------|
+| Variable name              | Default value                | Location            | Description                                   |
+|----------------------------|------------------------------|---------------------|-----------------------------------------------|
 | `docksal__bin_dir`         | `/usr/local/bin`             | `vars/main.yml`     | The directory to install the `fin` binary to. |
 | `docksal__fin__path`       | `{{ docksal__bin_dir }}/fin` | `vars/main.yml`     | The full path to the installed `fin` binary.  |
 | `docksal__user`            | `{{ ansible_user }}`         | `defaults/main.yml` | The user to install Docksal/fin for.          |
@@ -36,8 +36,7 @@ happen. Either:
     - name: Install and configure Docksal.
       hosts: all
       vars:
-        docksal_user: "molecule"
-        docksal_user_rc_file: "{{ docksal_user_home }}/.bashrc"
+        docksal_user: "ctorgalson"
         docksal_global_config:
           - key: "DOCKSAL_VHOST_PROXY_IP"
             value: "0.0.0.0"

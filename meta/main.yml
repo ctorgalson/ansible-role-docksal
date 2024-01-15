@@ -1,3 +1,6 @@
+---
+# Metadata for ansible-role-docksal.
+
 galaxy_info:
   author: Christopher Torgalson
   description: A role to install Docksal on web development machines.
