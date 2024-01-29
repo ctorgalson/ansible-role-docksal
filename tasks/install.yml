@@ -36,7 +36,7 @@
 - name: "Docksal | get new fin version."
   command: "fin --version"
   become: true
-  become_user: "{{ docksal_user|default(ansible_user) }}"
+  become_user: "{{ docksal__user|default(ansible_user) }}"
   register: "dl__fin_update_version"
   check_mode: false
   changed_when: >

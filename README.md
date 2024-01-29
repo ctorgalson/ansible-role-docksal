@@ -17,7 +17,7 @@ sudo access. This means that when used in playbooks, one of two things has to
 happen. Either:
 
 1. The `ansible-playbook` command should be run with the `-K` flag, or
-2. The `{{ docksal_user }}` should be set up with passwordless sudo access 
+2. The `{{ docksal__user }}` should be set up with passwordless sudo access 
    (this is how this role's tests run).
 
 ## Role Variables
@@ -28,7 +28,7 @@ happen. Either:
 | `docksal__fin__path`       | `{{ docksal__bin_dir }}/fin` | `vars/main.yml`     | The full path to the installed `fin` binary.  |
 | `docksal__user`            | `{{ ansible_user }}`         | `defaults/main.yml` | The user to install Docksal/fin for.          |
 | `docksal__docksal_version` | `master`                     | `defaults/main.yml` | The specific version of Docksal to install.   |
-| `docksal__global_config`   | `[]`                         | `defaults/main.yml` | Config  variables to set in the `docksal_user`'s `.docksal` directory. Each item must include a `key` property and a `value` property. If the item also has a property `secret` set to `true`, `no_log` will be used for the ansible task that sets the variable. |
+| `docksal__global_config`   | `[]`                         | `defaults/main.yml` | Config  variables to set in the `docksal__user`'s `.docksal` directory. Each item must include a `key` property and a `value` property. If the item also has a property `secret` set to `true`, `no_log` will be used for the ansible task that sets the variable. |
 
 ## Example Playbook
 
@@ -36,7 +36,7 @@ happen. Either:
     - name: Install and configure Docksal.
       hosts: all
       vars:
-        docksal_user: "ctorgalson"
+        docksal__user: "ctorgalson"
         docksal_global_config:
           - key: "DOCKSAL_VHOST_PROXY_IP"
             value: "0.0.0.0"

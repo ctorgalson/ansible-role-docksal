@@ -11,7 +11,7 @@
     - name: "Docksal | find out the fin and docksal versions."
       command: "fin --version"
       become: true
-      become_user: "{{ docksal_user|default(ansible_user) }}"
+      become_user: "{{ docksal__user|default(ansible_user) }}"
       register: "dl__fin_and_docksal_version"
       check_mode: false
       changed_when: false
