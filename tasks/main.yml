@@ -12,15 +12,15 @@
       command: "fin --version"
       become: true
       become_user: "{{ docksal_user|default(ansible_user) }}"
-      register: "dl__fin_version"
+      register: "dl__fin_and_docksal_version"
       check_mode: false
       changed_when: false
       when: "dl__stat_fin.stat.exists"
 
     - name: "Docksal | extract fin and docksal versions."
       set_fact:
-        dl__docksal_version: "{{ dl__fin_version.stdout_lines[0]|regex_search('[v0-9\\.]+$') }}"
-        dl__fin_version: "{{ dl__fin_version.stdout_lines[1]|regex_search('[v0-9\\.]+$') }}"
+        dl__docksal_version: "{{ dl__fin_and_docksal_version.stdout_lines[0]|regex_search('[v0-9\\.]+$') }}"
+        dl__fin_version: "{{ dl__fin_and_docksal_version.stdout_lines[1]|regex_search('[v0-9\\.]+$') }}"
       when: "dl__stat_fin.stat.exists"
 
 - name: "Docksal | include install tasks."
