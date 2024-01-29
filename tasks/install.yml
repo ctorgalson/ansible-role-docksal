@@ -18,7 +18,7 @@
 #   installed version (if any).
 - name: "Docksal | download fin script to {{ docksal__fin_path }}."
   ansible.builtin.get_url:
-    url: "https://raw.githubusercontent.com/docksal/docksal/{{ dl__docksal_version }}/bin/fin?r={{ lookup('community.general.random_string') }}"
+    url: "https://raw.githubusercontent.com/docksal/docksal/{{ docksal__docksal_version }}/bin/fin?r={{ lookup('community.general.random_string') }}"
     dest: "{{ docksal__fin_path }}"
     mode: "a+rx"
 
